@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 //hooks
 import { getProductById } from "../api/product.api";
 //types
@@ -10,21 +10,21 @@ const useFetchProductDetails = (id: number | string) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchDetails = async () => {
-      try {
-        setLoading(true);
-        const data = await getProductById(id);
-        setDetails(data);
-      } catch (err: any) {
-        setError(err.message || "Failed to fetch details");
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchDetails = React.useCallback(async () => {
+    try {
+      setLoading(true);
+      const data = await getProductById(id);
+      setDetails(data);
+    } catch (err: any) {
+      setError(err.message || "Failed to fetch details");
+    } finally {
+      setLoading(false);
+    }
+  }, [id]);
 
-    fetchDetails();
-  }, []);
+  useEffect(() => {
+    fetchDetails?.();
+  }, [fetchDetails]);
 
   return { details, loading, error };
 };

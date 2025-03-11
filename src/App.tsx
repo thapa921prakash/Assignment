@@ -1,20 +1,13 @@
 import React from "react";
-//router
-import { BrowserRouter as Router } from "react-router-dom";
-//layout
+
 import Layout from "./components/layout";
-//components
-import RouteList from "./components/route-list";
+import { ChakraProvider } from "@chakra-ui/react";
 
 const App: React.FC = () => {
   return (
-    <>
-      <Router>
-        <Layout>
-          <RouteList />
-        </Layout>
-      </Router>
-    </>
+    <ChakraProvider>
+      <Layout />
+    </ChakraProvider>
   );
 };
 

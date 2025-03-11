@@ -17,7 +17,6 @@ const NoPageFound = () => {
       alignItems="center"
       height="100vh"
     >
-      {/* Image component */}
       <Image
         src={NoPageImage}
         alt="404 Page Not Found"
@@ -31,7 +30,6 @@ const NoPageFound = () => {
       <Text fontSize="lg" mt={4} mb={6}>
         Oops! The page you're looking for doesn't exist.
       </Text>
-
       <Link to="/">Go Back Home</Link>
     </Box>
   );

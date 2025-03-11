@@ -5,6 +5,7 @@ import { Box, Center, Flex, Spinner, Text } from "@chakra-ui/react";
 import useFetchProducts from "../hooks/use-fetch-products";
 //components
 import { ProductCard } from "./product-card";
+//error boundary
 import ErrorBoundary from "./error-boundary";
 //react-if
 import { When } from "react-if";
@@ -19,8 +20,8 @@ const ProductList: React.FC = () => {
   return (
     <ErrorBoundary>
       <Box>
-        <Text fontSize={"16px"} fontWeight="bold" mb={20} textAlign={"center"}>
-          Explore Our Products
+        <Text fontSize={"16px"} fontWeight="bold" textAlign={"center"} mb={6}>
+          Product List
         </Text>
         <When condition={error && !loading}>
           <Center h="100vh">
