@@ -1,5 +1,4 @@
 import React from "react";
-
 //router
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 //components
@@ -14,8 +13,20 @@ const Layout: React.FC = () => {
   return (
     <Router>
       <>
-        <Box display="flex" height="100vh" background="#EFF0F5">
-          <Box flex={1} overflowY={"auto"}>
+        {/* Main container with responsive flexDirection */}
+        <Box
+          display="flex"
+          height="100vh"
+          background="#EFF0F5"
+          flexDirection={{ base: "column", md: "row" }}
+        >
+          {/* Main content area */}
+          <Box
+            flex={1}
+            overflowY={"auto"}
+            padding="20px"
+            display={{ base: "none", md: "block" }}
+          >
             <Routes>
               <Route
                 path={`/${RouteEnum.product}/:id`}
@@ -34,11 +45,13 @@ const Layout: React.FC = () => {
             </Routes>
           </Box>
 
+          {/* Product list area */}
           <Box
-            width="300px"
-            borderLeft="1px solid #ccc"
+            width={{ base: "100%", md: "300px" }} // Full width on mobile, fixed width on desktop
+            borderLeft={{ base: "none", md: "1px solid #ccc" }}
             overflowY="auto"
             padding="20px"
+            order={{ base: 1, md: 2 }} // Show this above the product details on mobile
           >
             <ProductList />
           </Box>
