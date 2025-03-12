@@ -10,6 +10,8 @@ import { Link } from "react-router-dom";
 import { StarIcon } from "@chakra-ui/icons"; // Import StarIcon
 //react-if
 import { When } from "react-if";
+//utils
+import { calculateDiscountedPrice } from "./utils";
 //props
 interface ProductCardProps {
   product: Product;
@@ -29,7 +31,6 @@ export const ProductCard = ({ product }: ProductCardProps) => (
       _hover={{ boxShadow: "14px", transform: "translateY(-5px)" }}
       p={4}
       cursor="pointer"
-      mb={2}
     >
       <Image
         src={product.thumbnail}
@@ -44,10 +45,25 @@ export const ProductCard = ({ product }: ProductCardProps) => (
       <Text color="gray.600" fontSize="sm" noOfLines={2}>
         {product.description}
       </Text>
-      <Flex gap={6} alignItems={"center"} mt={2}>
-        <Text fontWeight="bold" color="teal.500" fontSize="14px">
-          ${product.price}
-        </Text>
+      <Text fontWeight="bold" color="teal.500" fontSize="14px" mt={2}>
+        ${" "}
+        {calculateDiscountedPrice(
+          product?.price ?? 0,
+          product?.discountPercentage ?? 0
+        ).toFixed(2)}
+      </Text>
+      <Flex gap={6} alignItems={"center"}>
+        <When condition={product?.discountPercentage}>
+          <Text
+            fontSize="14px"
+            fontWeight="bold"
+            color="teal.500"
+            textDecoration={""}
+            mt={1}
+          >
+            <s style={{ marginRight: "8px" }}>${product?.price?.toFixed(2)}</s>
+          </Text>
+        </When>
         <When condition={product?.discountPercentage}>
           <Badge top={2} right={2} colorScheme="red" borderRadius="full" px={2}>
             {product?.discountPercentage}% OFF
@@ -57,7 +73,7 @@ export const ProductCard = ({ product }: ProductCardProps) => (
       <Flex align="center" mt={2}>
         <StarIcon color="yellow.400" />
         <Text ml={1} fontSize="sm" color="gray.600">
-          {product.rating}
+          {product?.rating}
         </Text>
       </Flex>
     </Box>

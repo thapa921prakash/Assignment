@@ -1,11 +1,18 @@
-import { Box, Center, Flex, Spinner } from "@chakra-ui/react";
-import { isEmpty } from "lodash";
 import React from "react";
+//chakra
+import { Box, Center, Flex, Spinner } from "@chakra-ui/react";
+//lodash
+import { isEmpty } from "lodash";
+//react-if
 import { When } from "react-if";
+//react-router-dom
 import { useParams } from "react-router-dom";
+//hooks
 import useFetchProductDetails from "../hooks/use-fetch-product-details";
-import { ProductDetailsCard } from "./details-card";
+//ErrorBoundary
 import ErrorBoundary from "./error-boundary";
+//components
+import { ProductDetailsCard } from "./details-card";
 import ReviewSection from "./review-section";
 
 const ProductDetails: React.FC = () => {

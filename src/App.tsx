@@ -1,7 +1,8 @@
 import React from "react";
-
-import Layout from "./components/layout";
+//chakra-provider
 import { ChakraProvider } from "@chakra-ui/react";
+//layout
+import Layout from "./components/layout";
 
 const App: React.FC = () => {
   return (

@@ -4,29 +4,32 @@ import { getAllProducts } from "../api/product.api";
 //types
 import { Product } from "../types/types";
 
-const useFetchProducts = () => {
-  //local states
+const useFetchProducts = (pageIndex: number) => {
   const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string>("");
+  const [total, setTotal] = useState(0);
+  const limit = 10; // Number of products per pageIndex
 
   const fetchProducts = React.useCallback(async () => {
     try {
       setLoading(true);
-      const data = await getAllProducts();
+      const skip = (pageIndex - 1) * limit;
+      const data = await getAllProducts(skip, limit);
       setProducts(data.products);
+      setTotal(data.total);
     } catch (err: any) {
       setError(err.message || "Failed to fetch products");
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [pageIndex]);
 
   useEffect(() => {
-    fetchProducts?.();
-  }, [fetchProducts]);
+    fetchProducts();
+  }, [pageIndex]);
 
-  return { products, loading, error };
+  return { products, loading, error, total };
 };
 
 export default useFetchProducts;

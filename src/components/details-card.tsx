@@ -1,115 +1,77 @@
-import { Badge, Box, Flex, Image, Tag, Text } from "@chakra-ui/react";
+//chakra
+import { Badge, Box, Flex, Tag, Text } from "@chakra-ui/react";
+//types
 import { Product } from "../types/types";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-import Slider from "react-slick";
-import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
+//utils
+import { calculateDiscountedPrice } from "./utils";
+//react-if
+import { When } from "react-if";
+//component
+import ImageCardCard from "./image-card";
 
 interface productProps {
   product?: Product;
 }
 
 export const ProductDetailsCard = ({ product }: productProps) => {
-  // Custom Left Arrow Component
-  const PrevArrow = (props: any) => {
-    const { onClick } = props;
-    return (
-      <Box
-        as="button"
-        position="absolute"
-        top="50%"
-        left="10px"
-        transform="translateY(-50%)"
-        zIndex={2}
-        onClick={onClick}
-        _hover={{ color: "teal.500" }}
-        cursor={"pointer"}
-      >
-        <ChevronLeftIcon boxSize={8} color="teal.600" />
-      </Box>
-    );
-  };
-
-  // Custom Right Arrow Component
-  const NextArrow = (props: any) => {
-    const { onClick } = props;
-    return (
-      <Box
-        as="button"
-        position="absolute"
-        top="50%"
-        right="10px"
-        transform="translateY(-50%)"
-        zIndex={2}
-        onClick={onClick}
-        _hover={{ color: "teal.500" }}
-        cursor={"pointer"}
-      >
-        <ChevronRightIcon boxSize={8} color="teal.600" />
-      </Box>
-    );
-  };
-
-  const settings = {
-    dots: true,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    nextArrow: <NextArrow />,
-    prevArrow: <PrevArrow />,
-  };
-
   return (
     <Box bg={"#fff"}>
       <Flex flexWrap={"wrap"} gap={20}>
-        {/* Carousel Container */}
-        <Box
-          position="relative"
-          w="100%"
-          maxW="600px"
-          h="400px"
-          overflow="hidden"
-        >
-          <Slider {...settings}>
-            {product?.images?.map((i: any) => (
-              <Box key={i} w="100%" h="400px" position="relative">
-                <Image
-                  src={i}
-                  alt={i}
-                  borderRadius="md"
-                  w="100%"
-                  h="100%"
-                  objectFit="contain"
-                />
-              </Box>
-            ))}
-          </Slider>
-        </Box>
+        <ImageCardCard product={product} />
 
         {/* Product Details */}
         <Box padding={6}>
           <Text fontSize="14px" fontWeight="bold">
             {product?.title}
           </Text>
-          <Text fontSize="14px" fontWeight="bold" color="teal.500">
-            ${product?.price?.toFixed(2)}
-          </Text>
-          <Flex direction={"column"} gap={2} mt={2}>
-            <Flex gap={2}>
+          <When condition={product?.discountPercentage}>
+            <Text
+              fontSize="14px"
+              fontWeight="bold"
+              color="teal.500"
+              textDecoration={""}
+              mt={1}
+            >
+              <s style={{ marginRight: "8px" }}>
+                ${product?.price?.toFixed(2)}
+              </s>
+            </Text>
+          </When>
+          <When condition={!product?.discountPercentage}>
+            <Text
+              fontSize="14px"
+              fontWeight="bold"
+              color="teal.500"
+              textDecoration={""}
+              mt={1}
+            >
+              $ {product?.price?.toFixed(2)}
+            </Text>
+          </When>
+
+          <Flex direction={"column"} gap={2} mt={1}>
+            <Flex gap={2} mt={1}>
+              <Text fontSize="14px" fontWeight="bold" color="teal.500">
+                ${" "}
+                {calculateDiscountedPrice(
+                  product?.price ?? 0,
+                  product?.discountPercentage ?? 0
+                ).toFixed(2)}
+              </Text>
               <Badge colorScheme="green" fontSize="md" w={"fit-content"}>
                 {product?.discountPercentage}% OFF
               </Badge>
-              <Badge
-                colorScheme={
-                  product?.availabilityStatus === "Low Stock" ? "red" : "green"
-                }
-                w={"fit-content"}
-                fontSize="sm"
-              >
-                {product?.availabilityStatus}
-              </Badge>
             </Flex>
+            <Badge
+              colorScheme={
+                product?.availabilityStatus === "Low Stock" ? "red" : "green"
+              }
+              w={"fit-content"}
+              fontSize="14px"
+              mt={1}
+            >
+              {product?.availabilityStatus}
+            </Badge>
 
             <Flex gap={2} wrap={"wrap"} mb={2}>
               {product?.tags.map((tag: string, index: number) => (
@@ -118,29 +80,61 @@ export const ProductDetailsCard = ({ product }: productProps) => {
                   colorScheme="purple"
                   size="md"
                   w={"fit-content"}
+                  mt={1}
                 >
                   {tag}
                 </Tag>
               ))}
             </Flex>
           </Flex>
-
-          <Text fontSize="sm" color="gray.600">
-            Brand: {product?.brand}
-          </Text>
-          <Text fontSize="sm" color="gray.600">
-            SKU: {product?.sku}
-          </Text>
-
-          <Text fontSize="sm" color="gray.600">
-            Shipping: {product?.shippingInformation}
-          </Text>
-          <Text fontSize="sm" color="gray.600">
-            Warranty: {product?.warrantyInformation}
-          </Text>
-          <Text fontSize="sm" color="gray.600">
-            Return Policy: {product?.returnPolicy}
-          </Text>
+          <Flex gap={4} mt={1}>
+            <Text fontSize="14px" color="gray.600" w={"160px"}>
+              Brand:
+            </Text>
+            <Text fontSize="14px" fontWeight={500} color="gray.600">
+              {product?.brand}
+            </Text>
+          </Flex>
+          <Flex gap={4}>
+            <Text fontSize="14px" color="gray.600" w={"160px"}>
+              SKU
+            </Text>
+            <Text fontSize="14px" fontWeight={500} color="gray.600">
+              {product?.sku}
+            </Text>
+          </Flex>
+          <Flex gap={4}>
+            <Text fontSize="14px" color="gray.600" w={"160px"}>
+              Minimum order quantity:
+            </Text>
+            <Text fontSize="14px" fontWeight={500} color="gray.600">
+              {product?.minimumOrderQuantity}
+            </Text>
+          </Flex>
+          <Flex gap={4}>
+            <Text fontSize="14px" color="gray.600" w={"160px"}>
+              Shipping:
+            </Text>
+            <Text fontSize="14px" fontWeight={500} color="gray.600">
+              {product?.shippingInformation}
+            </Text>
+          </Flex>
+          <Flex gap={4}>
+            <Text fontSize="14px" color="gray.600" w={"160px"}>
+              Warranty:
+            </Text>
+            <Text fontSize="14px" fontWeight={500} color="gray.600">
+              {product?.warrantyInformation}
+            </Text>
+          </Flex>
+          <Flex gap={4}>
+            <Text fontSize="14px" color="gray.600" w={"160px"}>
+              Return Policy:
+            </Text>
+            <Text fontSize="14px" fontWeight={500} color="gray.600">
+              {product?.returnPolicy}
+            </Text>
+          </Flex>
         </Box>
       </Flex>
       <Box padding={6}>
