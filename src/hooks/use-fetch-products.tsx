@@ -4,18 +4,17 @@ import { getAllProducts } from "../api/product.api";
 //types
 import { Product } from "../types/types";
 
-const useFetchProducts = (pageIndex: number) => {
+const useFetchProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
   const [total, setTotal] = useState(0);
-  const limit = 10; // Number of products per pageIndex
+  const limit = -1; // to get all data
 
   const fetchProducts = React.useCallback(async () => {
     try {
       setLoading(true);
-      const skip = (pageIndex - 1) * limit;
-      const data = await getAllProducts(skip, limit);
+      const data = await getAllProducts(limit);
       setProducts(data.products);
       setTotal(data.total);
     } catch (err: any) {
@@ -23,11 +22,11 @@ const useFetchProducts = (pageIndex: number) => {
     } finally {
       setLoading(false);
     }
-  }, [pageIndex]);
+  }, []);
 
   useEffect(() => {
     fetchProducts();
-  }, [pageIndex]);
+  }, []);
 
   return { products, loading, error, total };
 };

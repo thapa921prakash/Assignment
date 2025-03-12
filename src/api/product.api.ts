@@ -3,10 +3,9 @@ import { ProductsResponse, Product } from "../types/types";
 const BASE_URL = "https://dummyjson.com/products";
 
 export const getAllProducts = async (
-  skip: number,
   limit: number
 ): Promise<ProductsResponse> => {
-  const response = await fetch(`${BASE_URL}?skip=${skip}&limit=${limit}`);
+  const response = await fetch(`${BASE_URL}?limit=${limit}`);
   if (!response.ok) {
     throw new Error("Failed to fetch products");
   }

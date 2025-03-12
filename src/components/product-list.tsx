@@ -1,6 +1,14 @@
 import React, { useState } from "react";
 //chakra
-import { Box, Button, Center, Flex, Spinner, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Center,
+  Flex,
+  Input,
+  Spinner,
+  Text,
+} from "@chakra-ui/react";
 //lodash
 import { isEmpty } from "lodash";
 //react-if
@@ -15,20 +23,41 @@ import { ProductCard } from "./product-card";
 import { ArrowLeftIcon, ArrowRightIcon } from "@chakra-ui/icons";
 
 const ProductList: React.FC = () => {
-  //local states
+  // Local states
   const [pageIndex, setPageIndex] = useState(1);
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
-  // Fetch products with search and pagination
-  const { products, loading, error, total } = useFetchProducts(pageIndex);
+  // Fetch all products
+  const { products, loading, error, total } = useFetchProducts();
 
   // Constants for pagination
-  const limit = 10; // Number of products per pageIndex
-  const totalpPageIndex = Math.ceil(total / limit);
+  const limit = 10; // Number of products per page
+
+  // Filter products based on the search query
+  const filteredProducts = products.filter((product) =>
+    product.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // Total number of pages based on filtered products
+  const totalPageIndex = Math.ceil(total / limit);
+
+  // Paginate filtered products
+  const paginatedProducts = filteredProducts.slice(
+    (pageIndex - 1) * limit,
+    pageIndex * limit
+  );
 
   // Handle pagination
-  const handleNextPageIndex = () => setPageIndex((prev: any) => prev + 1);
+  const handleNextPageIndex = () =>
+    setPageIndex((prev) => Math.min(prev + 1, totalPageIndex));
   const handlePrevPageIndex = () =>
-    setPageIndex((prev: any) => Math.max(prev - 1, 1));
+    setPageIndex((prev) => Math.max(prev - 1, 1));
+
+  // Handle search input change
+  const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+    setPageIndex(1); // Reset to first page when search query changes
+  };
 
   return (
     <ErrorBoundary>
@@ -36,6 +65,15 @@ const ProductList: React.FC = () => {
         <Text fontSize={"16px"} fontWeight="bold" textAlign={"center"} mb={6}>
           Product List
         </Text>
+
+        {/* Search Bar */}
+        <Input
+          bg={"#ffff"}
+          placeholder="Search products by title..."
+          value={searchQuery}
+          onChange={handleSearchInputChange}
+          mb={4}
+        />
 
         {/* Error State */}
         <When condition={error && !loading}>
@@ -60,23 +98,24 @@ const ProductList: React.FC = () => {
         </When>
 
         {/* Product List */}
-        <When condition={!loading && !isEmpty(products)}>
+        <When condition={!loading && !isEmpty(paginatedProducts)}>
           <Flex flexWrap={"wrap"} gap={4}>
-            {products?.map((product) => (
+            {paginatedProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </Flex>
+
           {/* Pagination Controls */}
           <Flex justifyContent="center" mt={6} gap={4}>
             <Button onClick={handlePrevPageIndex} disabled={pageIndex === 1}>
               <ArrowLeftIcon fontSize={"16px"} />
             </Button>
             <Text>
-              {pageIndex} of {totalpPageIndex}
+              {pageIndex} of {totalPageIndex}
             </Text>
             <Button
               onClick={handleNextPageIndex}
-              disabled={pageIndex === totalpPageIndex}
+              disabled={pageIndex === totalPageIndex}
             >
               <ArrowRightIcon fontSize={"16px"} />
             </Button>

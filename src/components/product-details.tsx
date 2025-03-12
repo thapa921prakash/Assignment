@@ -1,6 +1,6 @@
 import React from "react";
 //chakra
-import { Box, Center, Flex, Spinner } from "@chakra-ui/react";
+import { Box, Center, Flex, Spinner, Text } from "@chakra-ui/react";
 //lodash
 import { isEmpty } from "lodash";
 //react-if
@@ -21,6 +21,13 @@ const ProductDetails: React.FC = () => {
 
   return (
     <>
+      <When condition={error}>
+        <Center h="100vh">
+          <Text fontSize="xl" color="red.500">
+            Error: {error}
+          </Text>
+        </Center>
+      </When>
       <When condition={loading}>
         <Center h="100vh">
           <Spinner
