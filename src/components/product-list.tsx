@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 //chakra
 import {
   Box,
@@ -39,7 +39,14 @@ const ProductList: React.FC = () => {
   );
 
   // Total number of pages based on filtered products
-  const totalPageIndex = Math.ceil(total / limit);
+  const totalPageIndex = Math.ceil(filteredProducts?.length / limit);
+
+  // Adjust pageIndex if it exceeds totalPageIndex after filtering
+  useEffect(() => {
+    if (pageIndex > totalPageIndex && totalPageIndex > 0) {
+      setPageIndex(totalPageIndex);
+    }
+  }, [filteredProducts, totalPageIndex, pageIndex]);
 
   // Paginate filtered products
   const paginatedProducts = filteredProducts.slice(
@@ -56,7 +63,7 @@ const ProductList: React.FC = () => {
   // Handle search input change
   const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
-    setPageIndex(1); // Reset to first page when search query changes
+    setPageIndex(1); // Reset to page 1 whenever a new search is made
   };
 
   return (
@@ -120,6 +127,15 @@ const ProductList: React.FC = () => {
               <ArrowRightIcon fontSize={"16px"} />
             </Button>
           </Flex>
+        </When>
+
+        {/* No products found message */}
+        <When condition={!loading && isEmpty(filteredProducts)}>
+          <Center h="100vh">
+            <Text fontSize="xl" color="gray.500">
+              No products found matching your search.
+            </Text>
+          </Center>
         </When>
       </Box>
     </ErrorBoundary>
